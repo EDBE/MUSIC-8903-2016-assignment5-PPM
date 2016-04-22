@@ -23,6 +23,7 @@ public:
     
     Error_t initInstance(float sampleRate, int windowSize, int numChannel);
     Error_t resetInstance();
+    float getPeak(int channelIdx);
     
 //    Error_t process (const float **ppfInputBuffer, float **ppfOutputBuffer, int numOfFrames);
     Error_t ppmProcess (float **ppfInputBuffer, int numOfFrames);

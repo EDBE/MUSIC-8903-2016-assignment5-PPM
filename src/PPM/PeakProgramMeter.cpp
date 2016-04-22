@@ -45,8 +45,8 @@ Error_t PeakProgramMeter::initInstance(float sampleRate = 44100,int windowSize =
     m_ppfFilterBuf   = new float*[numChannel];
     m_ppfPeak        = new float*[numChannel];
     for (int i = 0; i < m_iNumChannels; i++) {
-        m_ppfFilterBuf[i] = new float [0];
-        m_ppfPeak[i]      = new float [0];
+        m_ppfFilterBuf[i] = new float [1];
+        m_ppfPeak[i]      = new float [1];
     }
     m_kfAlphaAtt     = 1.f - (exp(-2.2f / (m_fSampleRate*.01f)));
     m_kfAlphaRelease = 1.f - (exp(-2.2f / (m_fSampleRate*1.5f)));
@@ -113,4 +113,10 @@ Error_t PeakProgramMeter::ppmProcess(float **ppfInputBuffer, int numOfFrames) {
         }
     }
     return kNoError;
+}
+
+float PeakProgramMeter::getPeak(int channelIdx) {
+    float peak = 0.f;
+    peak = m_ppfPeak[channelIdx][0];
+    return peak;
 }
