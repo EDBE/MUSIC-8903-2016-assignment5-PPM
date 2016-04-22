@@ -3,6 +3,7 @@
 #ifdef WITH_TESTS
 #include <cassert>
 #include <cstdio>
+#include <iostream>
 
 #include "UnitTest++.h"
 
@@ -56,11 +57,12 @@ SUITE(Vibrato)
                 CVector::setZero(m_ppfOutputData[i], m_kiDataLength);
                 
                 m_ppfPeakValue[i] = new float [m_iNumOfBlocks];
-                CVector::setZero(m_ppfPeakValue, m_iNumOfBlocks);
+                CVector::setZero(m_ppfPeakValue[i], m_iNumOfBlocks);  //There was a bug here too. it was just m_ppfPeakValue
                 
                 m_ppfReference[i] = new float [m_iNumOfBlocks];
-                CVector::setZero(m_ppfReference, m_iNumOfBlocks);
+                CVector::setZero(m_ppfReference[i], m_iNumOfBlocks); //likewise
             }
+            
         }
 
         ~VibratoData() 
@@ -215,6 +217,7 @@ SUITE(Vibrato)
     
     //First Test: zero input; Expect zero output
     TEST_FIXTURE(VibratoData, zeroInputPPM) {
+        
         for (int i = 0; i < m_iNumChannels; i++)
         {
             m_ppfInputData[i] = new float [m_kiDataLength];
@@ -222,13 +225,14 @@ SUITE(Vibrato)
         }
 
         process();
+        
         for (int c = 0; c < m_iNumChannels; c++) {
-            CHECK_ARRAY_CLOSE(m_ppfReference[c], m_ppfPeakValue[c], m_iNumOfBlocks, 1e-3F);
+            CHECK_ARRAY_CLOSE(m_ppfReference[c], m_ppfPeakValue[c], m_iNumOfBlocks, 0);
         }
 
 
     }
-//    
+//
 //    //Second Test: DC input; Expect DC output
 //    TEST_FIXTURE(VibratoData, dcInputPPM) {
 //        for (int i = 0; i < m_iNumChannels; i++)

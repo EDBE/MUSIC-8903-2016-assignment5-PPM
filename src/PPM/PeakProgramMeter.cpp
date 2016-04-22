@@ -30,7 +30,7 @@ Error_t PeakProgramMeter::destroyInstance(PeakProgramMeter*& pPPM) {
     if (!pPPM) {
         return kUnknownError;
     }
-    pPPM -> resetInstance();
+//    pPPM -> resetInstance();  //This was the bug
     delete pPPM;
     pPPM = 0;
 
