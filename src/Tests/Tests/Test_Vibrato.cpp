@@ -121,37 +121,37 @@ SUITE(Vibrato)
             CHECK_ARRAY_CLOSE(m_ppfInputData[c], &m_ppfOutputData[c][iDelay], m_kiDataLength-iDelay, 1e-3F);
     }
 
-    TEST_FIXTURE(VibratoData, VibVaryingBlocksize)
-    {
-        m_pVibrato->setParam(CVibrato::kParamModFreqInHz, 2);
-        m_pVibrato->setParam(CVibrato::kParamModWidthInS, .1F);
-
-        process();
-
-        m_pVibrato->resetInstance();
-        m_pVibrato->initInstance(m_fMaxModWidth,m_fSampleRate,m_iNumChannels);
-        m_pVibrato->setParam(CVibrato::kParamModFreqInHz, 2);
-        m_pVibrato->setParam(CVibrato::kParamModWidthInS, .1F);
-        {
-            int iNumFramesRemaining = m_kiDataLength;
-            while (iNumFramesRemaining > 0)
-            {
-
-                int iNumFrames = std::min(iNumFramesRemaining, rand()/RAND_MAX*17000);
-
-                for (int c = 0; c < m_iNumChannels; c++)
-                {
-                    m_ppfInputTmp[c] = &m_ppfInputData[c][m_kiDataLength - iNumFramesRemaining];
-                }
-                m_pVibrato->process(m_ppfInputTmp, m_ppfInputTmp, iNumFrames);
-
-                iNumFramesRemaining -= iNumFrames;
-            }
-        }
-
-        for (int c = 0; c < m_iNumChannels; c++)
-            CHECK_ARRAY_CLOSE(m_ppfInputData[c], m_ppfOutputData[c], m_kiDataLength, 1e-3);
-    }
+//    TEST_FIXTURE(VibratoData, VibVaryingBlocksize)
+//    {
+//        m_pVibrato->setParam(CVibrato::kParamModFreqInHz, 2);
+//        m_pVibrato->setParam(CVibrato::kParamModWidthInS, .1F);
+//
+//        process();
+//
+//        m_pVibrato->resetInstance();
+//        m_pVibrato->initInstance(m_fMaxModWidth,m_fSampleRate,m_iNumChannels);
+//        m_pVibrato->setParam(CVibrato::kParamModFreqInHz, 2);
+//        m_pVibrato->setParam(CVibrato::kParamModWidthInS, .1F);
+//        {
+//            int iNumFramesRemaining = m_kiDataLength;
+//            while (iNumFramesRemaining > 0)
+//            {
+//
+//                int iNumFrames = std::min(iNumFramesRemaining, rand()/RAND_MAX*17000);
+//
+//                for (int c = 0; c < m_iNumChannels; c++)
+//                {
+//                    m_ppfInputTmp[c] = &m_ppfInputData[c][m_kiDataLength - iNumFramesRemaining];
+//                }
+//                m_pVibrato->process(m_ppfInputTmp, m_ppfInputTmp, iNumFrames);
+//
+//                iNumFramesRemaining -= iNumFrames;
+//            }
+//        }
+//
+//        for (int c = 0; c < m_iNumChannels; c++)
+//            CHECK_ARRAY_CLOSE(m_ppfInputData[c], m_ppfOutputData[c], m_kiDataLength, 1e-3);
+//    }
 
 //    TEST_FIXTURE(VibratoData, VibParamRange)
 //    {
