@@ -25,7 +25,7 @@ public:
     Error_t resetInstance();
     
 //    Error_t process (const float **ppfInputBuffer, float **ppfOutputBuffer, int numOfFrames);
-    Error_t ppmProcess (const float **ppfInputBuffer, float peakOfCurrentBlk, int numOfFrames);
+    Error_t ppmProcess (float **ppfInputBuffer, int numOfFrames);
     
 private:
     PeakProgramMeter();
@@ -35,12 +35,12 @@ private:
     int m_iWindowSize;
     int m_iHopSize;
     float m_fSampleRate;
-    float m_fFilterBuf;
     float m_kfAlphaAtt;
     float m_kfAlphaRelease;
     const float m_kfEpsilon = 1e-5;
     bool m_bIsInitialized;
-    
+    float** m_ppfFilterBuf;
+    float** m_ppfPeak;
 };
 
 #endif /* defined(__Vibrato2Plugin__PeakProgramMeter__) */

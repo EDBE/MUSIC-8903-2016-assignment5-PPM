@@ -33,6 +33,7 @@ Error_t PeakProgramMeter::destroyInstance(PeakProgramMeter*& pPPM) {
     pPPM -> resetInstance();
     delete pPPM;
     pPPM = 0;
+
     return kNoError;
 }
 
@@ -41,7 +42,12 @@ Error_t PeakProgramMeter::initInstance(float sampleRate = 44100,int windowSize =
     m_fSampleRate    = sampleRate;
     m_iNumChannels   = numChannel;
     m_iWindowSize    = windowSize;
-    m_fFilterBuf     = 0.f;
+    m_ppfFilterBuf   = new float*[numChannel];
+    m_ppfPeak        = new float*[numChannel];
+    for (int i = 0; i < m_iNumChannels; i++) {
+        m_ppfFilterBuf[i] = new float [0];
+        m_ppfPeak[i]      = new float [0];
+    }
     m_kfAlphaAtt     = 1.f - (exp(-2.2f / (m_fSampleRate*.01f)));
     m_kfAlphaRelease = 1.f - (exp(-2.2f / (m_fSampleRate*1.5f)));
     if (windowSize % 2 == 0) {
@@ -57,6 +63,13 @@ Error_t PeakProgramMeter::initInstance(float sampleRate = 44100,int windowSize =
 Error_t PeakProgramMeter::resetInstance() {
     m_iNumChannels = 0;
     m_bIsInitialized = false;
+    
+    for (int i = 0; i < m_iNumChannels; i++) {
+        delete [] m_ppfFilterBuf[i];
+        delete [] m_ppfPeak[i];
+    }
+    delete [] m_ppfFilterBuf;
+    delete [] m_ppfPeak;
     
     return kNoError;
 }
@@ -82,23 +95,22 @@ Error_t PeakProgramMeter::resetInstance() {
 //    return kNoError;
 //}
 
-Error_t PeakProgramMeter::ppmProcess(const float **ppfInputBuffer, float peakOfCurrentBlk, int numOfFrames) {
-    float filterBuf;
+Error_t PeakProgramMeter::ppmProcess(float **ppfInputBuffer, int numOfFrames) {
+    float filterBuf = 0.f;
     float ppmOut = 0.f;
     for (int i = 0; i < numOfFrames; i++) {
         for (int j = 0 ; j < m_iNumChannels; j++) {
-            filterBuf = m_fFilterBuf;
+            filterBuf = m_ppfFilterBuf[j][0];
             if (filterBuf > fabsf(ppfInputBuffer[j][i])) {
                 ppmOut = (1 - m_kfAlphaRelease) * filterBuf;
             } else {
                 ppmOut = m_kfAlphaAtt * fabsf(ppfInputBuffer[j][i]) + (1 - m_kfAlphaAtt) * filterBuf;
             }
-            m_fFilterBuf = ppmOut;
-            if (ppmOut > peakOfCurrentBlk) {
-                peakOfCurrentBlk = ppmOut;
+            m_ppfFilterBuf[j][0] = ppmOut;
+            if (ppmOut > m_ppfPeak[j][0]) {
+                m_ppfPeak[j][0] = ppmOut;
             }
         }
     }
-    peakOfCurrentBlk = 20 * log10f(peakOfCurrentBlk);
     return kNoError;
 }
