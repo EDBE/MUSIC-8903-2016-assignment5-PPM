@@ -2,7 +2,7 @@
 //  PeakProgramMeter.h
 //  Vibrato2Plugin
 //
-//  Created by Music Technology on 4/19/16.
+//  Created by Liang Tang on 4/19/16.
 //
 //
 
@@ -23,9 +23,8 @@ public:
     
     Error_t initInstance(float sampleRate, int windowSize, int numChannel);
     Error_t resetInstance();
-    float getPeak(int channelIdx);
     
-//    Error_t process (const float **ppfInputBuffer, float **ppfOutputBuffer, int numOfFrames);
+    float getPeak(int channelIdx);
     Error_t ppmProcess (float **ppfInputBuffer, int numOfFrames);
     
 private:
@@ -38,7 +37,6 @@ private:
     float m_fSampleRate;
     float m_kfAlphaAtt;
     float m_kfAlphaRelease;
-    const float m_kfEpsilon = 1e-5;
     bool m_bIsInitialized;
     float** m_ppfFilterBuf;
     float** m_ppfPeak;

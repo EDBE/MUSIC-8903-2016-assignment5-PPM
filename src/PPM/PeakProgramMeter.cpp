@@ -2,7 +2,7 @@
 //  PeakProgramMeter.cpp
 //  Vibrato2Plugin
 //
-//  Created by Music Technology on 4/19/16.
+//  Created by Liang Tang on 4/19/16.
 //
 //
 
@@ -72,27 +72,6 @@ Error_t PeakProgramMeter::resetInstance() {
     
     return kNoError;
 }
-
-
-//Error_t PeakProgramMeter::process (const float **ppfInputBuffer, float **ppfOutputBuffer, int numOfFrames) {
-//    
-//    if (!ppfInputBuffer || !ppfOutputBuffer) {
-//        return kFunctionInvalidArgsError;
-//    }
-//    int numBlocks = ceilf((float)numOfFrames / m_iWindowSize);
-//    
-//    for (int i = 0; i < numBlocks; i++) {
-//        for (int j = 0; j < m_iNumChannels; j++) {
-//            int i_start = i * m_iHopSize;
-//            int i_stop  = std::min(numOfFrames, i_start + m_iWindowSize);
-//            for (int k = i_start; k < i_stop; k++) {
-////                ppmProcess(ppfInputBuffer[i][k], ppfOutputBuffer[i][k], numOfFrames, ppfOutputBuffer[j][m_iHopSize]);
-//            }
-//        }
-//    }
-//    
-//    return kNoError;
-//}
 
 Error_t PeakProgramMeter::ppmProcess(float **ppfInputBuffer, int numOfFrames) {
     float filterBuf = 0.f;
