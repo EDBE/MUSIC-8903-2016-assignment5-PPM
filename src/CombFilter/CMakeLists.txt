@@ -1,4 +1,4 @@
-set(CurrLib CombFilter)
+ set(CurrLib CombFilter)
 
 
 # get all source files

@@ -30,7 +30,6 @@ Error_t PeakProgramMeter::destroyInstance(PeakProgramMeter*& pPPM) {
     if (!pPPM) {
         return kUnknownError;
     }
-//    pPPM -> resetInstance();  //This was the bug
     delete pPPM;
     pPPM = 0;
 
@@ -98,20 +97,23 @@ Error_t PeakProgramMeter::resetInstance() {
 Error_t PeakProgramMeter::ppmProcess(float **ppfInputBuffer, int numOfFrames) {
     float filterBuf = 0.f;
     float ppmOut = 0.f;
-    for (int i = 0; i < numOfFrames; i++) {
-        for (int j = 0 ; j < m_iNumChannels; j++) {
-            filterBuf = m_ppfFilterBuf[j][0];
-            if (filterBuf > fabsf(ppfInputBuffer[j][i])) {
+    float tempPeak = 0.f;
+    for (int i = 0 ; i < m_iNumChannels; i++) {
+        for (int j = 0 ; j < numOfFrames; j++) {
+            filterBuf = m_ppfFilterBuf[i][0];
+            if (filterBuf > fabsf(ppfInputBuffer[i][j])) {
                 ppmOut = (1 - m_kfAlphaRelease) * filterBuf;
             } else {
-                ppmOut = m_kfAlphaAtt * fabsf(ppfInputBuffer[j][i]) + (1 - m_kfAlphaAtt) * filterBuf;
+                ppmOut = m_kfAlphaAtt * fabsf(ppfInputBuffer[i][j]) + (1 - m_kfAlphaAtt) * filterBuf;
             }
-            m_ppfFilterBuf[j][0] = ppmOut;
-            if (ppmOut > m_ppfPeak[j][0]) {
-                m_ppfPeak[j][0] = ppmOut;
+            m_ppfFilterBuf[i][0] = ppmOut;
+            if (ppmOut > tempPeak) {
+                tempPeak = ppmOut;
             }
         }
+        m_ppfPeak[i][0] = tempPeak;
     }
+    
     return kNoError;
 }
 

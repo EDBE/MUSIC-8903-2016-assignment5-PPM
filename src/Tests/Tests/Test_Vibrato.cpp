@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 
 #include "UnitTest++.h"
 
@@ -253,22 +254,144 @@ SUITE(Vibrato)
         for (int i = 0; i < m_iNumChannels; i++)
         {
             m_ppfInputData[i] = new float [m_kiDataLength];
-            CSynthesis::generateSine(m_ppfInputData[i], 800, m_fSampleRate, m_kiDataLength, .6F, 0);
+            CSynthesis::generateSine(m_ppfInputData[i], 800, m_fSampleRate, m_kiDataLength, 1.0f, 0);
             
             m_ppfOutputData[i] = new float [m_kiDataLength];
             CVector::setZero(m_ppfOutputData[i], m_kiDataLength);
         
         }
-        process();
-        for (int c=0; c < m_iNumChannels; c++) {
-            for (int sample=0; sample < m_kiDataLength; sample++ ) {
-                //Read matlab output here
-            }
-            std::cout<<"Bling!"<<std::endl;
+        
+        std::ifstream inputFile( "/Users/Rithesh/Documents/Learn C++/ASE/MUSIC-8903-2016-assignment5-PPM/ref/sineAsTest.txt" );
+        
+        int curIdx = 0;
+        while ( curIdx<m_iNumOfBlocks ) {
+            inputFile>>m_ppfReference[0][curIdx];
+            curIdx++;
         }
+        inputFile.close();
+        
+        process();
         for (int c = 0; c < m_iNumChannels; c++)
-            CHECK_ARRAY_CLOSE(m_ppfInputData[c], m_ppfOutputData[c], m_kiDataLength, 1e-3F);
+            CHECK_ARRAY_CLOSE( m_ppfReference[c], m_ppfPeakValue[c], m_iNumOfBlocks, 5*1e-3F);
     }
+    
+    
+    //Fourth Test: Sawtooth Wave; test with matlab
+    TEST_FIXTURE(VibratoData, sawToothInputPPM) {
+        for (int i = 0; i < m_iNumChannels; i++)
+        {
+            m_ppfInputData[i] = new float [m_kiDataLength];
+            CSynthesis::generateSaw(m_ppfInputData[i], 1000, m_fSampleRate, m_kiDataLength, 0.8f);
+            
+            m_ppfOutputData[i] = new float [m_kiDataLength];
+            CVector::setZero(m_ppfOutputData[i], m_kiDataLength);
+            
+        }
+        
+
+//        //Check if matlab and c++ input values are the same
+//        std::ifstream inputFile( "/Users/Rithesh/Documents/Learn C++/ASE/MUSIC-8903-2016-assignment5-PPM/ref/sawInput.txt" );
+//        int curIdx = 0;
+//        while ( curIdx<m_kiDataLength ) {
+//            inputFile>>m_ppfOutputData[0][curIdx];
+//            curIdx++;
+//        }
+//
+//        for (int c = 0; c < m_iNumChannels; c++)
+//            CHECK_ARRAY_CLOSE( m_ppfOutputData[c], m_ppfInputData[c], 100, 1e-3F);
+
+        
+
+        std::ifstream inputFile( "/Users/Rithesh/Documents/Learn C++/ASE/MUSIC-8903-2016-assignment5-PPM/ref/sawAsTest.txt" );
+        int curIdx = 0;
+        while ( curIdx<m_iNumOfBlocks ) {
+            inputFile>>m_ppfReference[0][curIdx];
+            curIdx++;
+        }
+        inputFile.close();
+        
+        process();
+        for (int c = 0; c < m_iNumChannels; c++)
+            CHECK_ARRAY_CLOSE( m_ppfReference[c], m_ppfPeakValue[c], m_iNumOfBlocks, 1e-3F);
+        
+        
+    }
+    
+    //Fifth Test: Audio Signal; test with matlab
+    TEST_FIXTURE(VibratoData, audioInputPPM) {
+        for (int i = 0; i < m_iNumChannels; i++)
+        {
+            m_ppfInputData[i] = new float [m_kiDataLength];
+      
+            m_ppfOutputData[i] = new float [m_kiDataLength];
+            CVector::setZero(m_ppfOutputData[i], m_kiDataLength);
+            
+        }
+        
+    
+        std::ifstream inputFile( "/Users/Rithesh/Documents/Learn C++/ASE/MUSIC-8903-2016-assignment5-PPM/ref/audioAsInput.txt" );
+        int curIdx = 0;
+        while ( curIdx<m_kiDataLength ) {
+            inputFile>>m_ppfInputData[0][curIdx];
+            curIdx++;
+        }
+        inputFile.close();
+        
+        
+        inputFile.open("/Users/Rithesh/Documents/Learn C++/ASE/MUSIC-8903-2016-assignment5-PPM/ref/audioAsTest.txt");
+        curIdx = 0;
+        while ( curIdx<m_iNumOfBlocks ) {
+            inputFile>>m_ppfReference[0][curIdx];
+            curIdx++;
+        }
+        inputFile.close();
+        
+        process();
+        
+        for (int c = 0; c < m_iNumChannels; c++)
+            CHECK_ARRAY_CLOSE( m_ppfReference[c], m_ppfPeakValue[c], 69, 1e-3F);
+        
+        
+    }
+
+    //Sixth Test: Impulse Signal; test with matlab
+    TEST_FIXTURE(VibratoData, impulseInputPPM) {
+        for (int i = 0; i < m_iNumChannels; i++)
+        {
+            m_ppfInputData[i] = new float [m_kiDataLength];
+            
+            m_ppfOutputData[i] = new float [m_kiDataLength];
+            CVector::setZero(m_ppfOutputData[i], m_kiDataLength);
+            
+        }
+        
+        
+        std::ifstream inputFile( "/Users/Rithesh/Documents/Learn C++/ASE/MUSIC-8903-2016-assignment5-PPM/ref/impulseAsInput.txt" );
+        int curIdx = 0;
+        while ( curIdx<m_kiDataLength ) {
+            inputFile>>m_ppfInputData[0][curIdx];
+            curIdx++;
+        }
+        inputFile.close();
+        
+        
+        inputFile.open("/Users/Rithesh/Documents/Learn C++/ASE/MUSIC-8903-2016-assignment5-PPM/ref/impulseAsTest.txt");
+        curIdx = 0;
+        while ( curIdx<m_iNumOfBlocks ) {
+            inputFile>>m_ppfReference[0][curIdx];
+            curIdx++;
+        }
+        inputFile.close();
+        
+        process();
+        
+        for (int c = 0; c < m_iNumChannels; c++)
+            CHECK_ARRAY_CLOSE( m_ppfReference[c], m_ppfPeakValue[c], 69, 1e-3F);
+        
+        
+    }
+
+
     
 }
 
