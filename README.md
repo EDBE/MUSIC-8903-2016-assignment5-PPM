@@ -3,6 +3,10 @@ Repo for the class Audio Software Engineering Spring 2016
 
 We split the assignment 5 into two parts. Part 1 is the implementation and tests for the Peak Program Meter class. In part 2, we integrate tested PPM class into vibrato plugin which we created in assignment 4. Due to these two parts are relatively seperate to each other, we have two repos for assignment 5. 
 
+This is the repository for the first part.
+
+The plugin part is https://github.com/RitheshKumar/MUSI-8903-Assignment4/tree/GUI
+
 ## Assignment 5 Part 1: Peak Program Meter
 ### 1, Add a peak meter (PPM) to your Vibrato Library
 
